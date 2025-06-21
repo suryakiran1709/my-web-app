@@ -1,0 +1,85 @@
+components:
+  frontend:
+    # This will set the replicaset count
+    replicaCount: 1
+    # This sets the container image
+    image:
+      repository: nginx
+      pullPolicy: IfNotPresent
+      tag: "1.21.4"
+    env: {}
+    # This is to override the default name
+    nameOverride: "ui"
+    # This is for setting Kubernetes Labels to the Pod
+    podLabels: {}
+    # For Setting up service
+    service:
+      type: ClusterIP
+      port: 80
+    # For setting resource requirements
+    resources: {}
+    # Liveness and Readness probes for the pods
+    livenessProbe:
+      httpGet:
+        path: /
+        port: http
+      initialDelaySeconds: 10
+      periodSeconds: 10
+      timeoutSeconds: 2        
+      failureThreshold: 3         
+      successThreshold: 1
+    readinessProbe:
+      httpGet:
+        path: /
+        port: http
+      initialDelaySeconds: 5
+      periodSeconds: 5
+      timeoutSeconds: 2            
+      failureThreshold: 3          
+      successThreshold: 1 
+    # Volumes
+    volumes: []
+    # Volume Mounts
+    volumeMounts: []
+
+  backend:
+    # This will set the replicaset count
+    replicaCount: 1
+    # This sets the container image
+    image:
+      repository: httpd
+      pullPolicy: IfNotPresent
+      tag: "2.4"
+    env:
+      - name: API_KEY
+        valueFrom:
+          secretKeyRef:
+            name: backend-api-key
+            key: API_KEY
+    # This is to override the default name
+    nameOverride: "api"
+    # This is for setting Kubernetes Labels to the Pod
+    podLabels: {}
+    # For Setting up service
+    service:
+      type: ClusterIP
+      port: 80
+    # For setting resource requirements
+    resources: {}
+    # Liveness and Readness probes for the pods
+    livenessProbe:
+      httpGet:
+        path: /
+        port: http
+      initialDelaySeconds: 10
+      periodSeconds: 10
+    readinessProbe:
+      httpGet:
+        path: /
+        port: http
+      initialDelaySeconds: 5
+      periodSeconds: 5
+    # Volumes
+    volumes: []
+    # Volume Mounts
+    volumeMounts: []
